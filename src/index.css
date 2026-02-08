@@ -123,6 +123,11 @@ textarea {
     box-shadow 0.2s ease;
 }
 
+input[type='checkbox'],
+input[type='radio'] {
+  width: auto;
+}
+
 input:focus,
 select:focus,
 textarea:focus {
