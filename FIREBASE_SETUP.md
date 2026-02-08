@@ -122,25 +122,52 @@ VITE_FIREBASE_APP_ID=1:123456789:web:abc123
 
 ---
 
-## Optional: Firebase Hosting (Deploy to Web)
+## Firebase Hosting & Deployment
 
-1. Install Firebase CLI:
+The project is configured for Firebase Hosting with a custom domain.
+
+### Prerequisites
+
 ```bash
 npm install -g firebase-tools
-```
-
-2. Login and initialize:
-```bash
 firebase login
-firebase init hosting
 ```
-   - Select your project
-   - Public directory: `dist`
-   - Single-page app: `Yes`
-   - Overwrite index.html: `No`
 
-3. Build and deploy:
+### Configuration Files
+
+- **`firebase.json`** — Hosting (SPA rewrite, cache headers) + Firestore rules/indexes
+- **`.firebaserc`** — Project alias (`mountain-finance`)
+- **`firestore.rules`** — Security rules (user-scoped read/write)
+- **`firestore.indexes.json`** — Composite indexes (currently none needed)
+
+### Deploy
+
 ```bash
-npm run build
-firebase deploy --only hosting
+npm run build && firebase deploy
 ```
+
+This deploys both hosting and Firestore rules. To deploy selectively:
+
+```bash
+firebase deploy --only hosting    # Just the web app
+firebase deploy --only firestore  # Just rules and indexes
+```
+
+### Live URLs
+
+- **Custom domain:** https://mountain.thorshome.xyz
+- **Default:** https://mountain-finance.web.app
+
+### Custom Domain Setup (Cloudflare)
+
+The custom domain `mountain.thorshome.xyz` is configured with:
+
+1. **Cloudflare DNS:** CNAME record pointing `mountain` to `mountain-finance.web.app`
+   - Proxy mode must be **DNS only** (gray cloud) for Firebase SSL provisioning
+2. **Firebase Console:** Domain added under Hosting > Custom domains
+3. **Firebase Auth:** `mountain.thorshome.xyz` added to Authentication > Settings > Authorized domains
+
+To add a new custom domain:
+1. Add a CNAME in your DNS provider pointing to `mountain-finance.web.app`
+2. Go to Firebase Console > Hosting > Add custom domain
+3. Add the domain to Firebase Auth > Settings > Authorized domains

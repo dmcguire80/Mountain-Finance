@@ -17,6 +17,20 @@ npm run type-check   # TypeScript check only (tsc --noEmit)
 
 No test framework is configured.
 
+## Firebase Deployment
+
+```bash
+firebase deploy                  # Deploy hosting + Firestore rules
+firebase deploy --only hosting   # Deploy hosting only
+firebase deploy --only firestore # Deploy Firestore rules/indexes only
+```
+
+**Live URLs:**
+- Production: https://mountain.thorshome.xyz (custom domain)
+- Default: https://mountain-finance.web.app
+
+**Config files:** `firebase.json` (hosting + firestore), `.firebaserc` (project alias), `firestore.rules`, `firestore.indexes.json`
+
 ## Environment Setup
 
 Copy `.env.example` to `.env` and fill in Firebase credentials. All env vars use the `VITE_` prefix and are accessed via `import.meta.env.VITE_*`. See `FIREBASE_SETUP.md` for full Firebase project configuration.
