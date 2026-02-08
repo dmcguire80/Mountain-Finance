@@ -189,11 +189,7 @@ export function Login() {
                 <div className="spinner w-5 h-5 border-white/30 border-t-white"></div>
               ) : (
                 <>
-                  {isForgotPassword
-                    ? 'Send Reset Link'
-                    : isSignup
-                      ? 'Create Account'
-                      : 'Sign In'}
+                  {isForgotPassword ? 'Send Reset Link' : isSignup ? 'Create Account' : 'Sign In'}
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
