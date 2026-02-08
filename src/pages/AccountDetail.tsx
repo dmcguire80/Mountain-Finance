@@ -15,7 +15,7 @@ export function AccountDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { accounts, entries } = useData();
-  const [selectedFilter, setSelectedFilter] = useState('ytd');
+  const [selectedFilter, setSelectedFilter] = useState('latest');
 
   const account = useMemo(() => accounts.find((a) => a.id === id), [accounts, id]);
 

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import {
   LineChart,
   Line,
@@ -38,6 +38,11 @@ export function PortfolioChart({ data, accounts, showIndividualAccounts }: Portf
     }));
   }, [data]);
 
+  const yDomain = useCallback(([dataMin, dataMax]: [number, number]): [number, number] => {
+    const padding = (dataMax - dataMin) * 0.1 || dataMax * 0.05;
+    return [Math.max(0, Math.floor(dataMin - padding)), Math.ceil(dataMax + padding)];
+  }, []);
+
   if (data.length === 0) {
     return (
       <div className="flex items-center justify-center h-[300px] text-[var(--text-secondary)]">
@@ -52,6 +57,7 @@ export function PortfolioChart({ data, accounts, showIndividualAccounts }: Portf
         <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
         <XAxis dataKey="date" tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} />
         <YAxis
+          domain={yDomain}
           tickFormatter={(value) => formatCurrency(value)}
           tick={{ fill: 'var(--text-secondary)', fontSize: 12 }}
         />

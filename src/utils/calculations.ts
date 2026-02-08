@@ -37,6 +37,7 @@ export function formatDateInput(date: Date): string {
  * Time filters for chart display
  */
 export const timeFilters: TimeFilter[] = [
+  { id: 'latest', label: 'Latest', days: null }, // Last entry vs newest
   { id: '1m', label: 'Month', days: 30 },
   { id: '3m', label: '3 Month', days: 90 },
   { id: '6m', label: '6 Month', days: 180 },
@@ -51,6 +52,7 @@ export const timeFilters: TimeFilter[] = [
  * Get the number of days for a filter, with YTD calculated dynamically
  */
 export function getFilterDays(filterId: string): number {
+  if (filterId === 'latest') return -1; // Sentinel: last two entries only
   if (filterId === 'ytd') {
     const now = new Date();
     const startOfYear = new Date(now.getFullYear(), 0, 1);
@@ -65,6 +67,14 @@ export function getFilterDays(filterId: string): number {
  * Filter entries by time range
  */
 export function filterEntriesByDays(entries: Entry[], days: number): Entry[] {
+  if (days === -1) {
+    // "Latest" filter: return only the two most recent unique dates across all entries
+    const uniqueDates = [...new Set(entries.map((e) => formatDateInput(e.entryDate)))].sort();
+    if (uniqueDates.length <= 2) return entries;
+    const keepDates = new Set(uniqueDates.slice(-2));
+    return entries.filter((e) => keepDates.has(formatDateInput(e.entryDate)));
+  }
+
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() - days);
 
