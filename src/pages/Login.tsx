@@ -4,12 +4,14 @@ import { Wallet, Mail, Lock, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export function Login() {
-  const { user, login, signup, loading } = useAuth();
+  const { user, login, signup, resetPassword, loading } = useAuth();
   const [isSignup, setIsSignup] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   // Redirect if already logged in
@@ -20,6 +22,20 @@ export function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccessMessage('');
+
+    if (isForgotPassword) {
+      setSubmitting(true);
+      try {
+        await resetPassword(email);
+        setSuccessMessage('Password reset link sent! Check your email.');
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to send reset email');
+      } finally {
+        setSubmitting(false);
+      }
+      return;
+    }
 
     if (isSignup && password !== confirmPassword) {
       setError('Passwords do not match');
@@ -63,7 +79,11 @@ export function Login() {
           </div>
           <h1 className="text-2xl font-bold text-[var(--text-primary)]">Mountain Finance</h1>
           <p className="text-[var(--text-secondary)] mt-2">
-            {isSignup ? 'Create your account' : 'Sign in to your account'}
+            {isForgotPassword
+              ? 'Reset your password'
+              : isSignup
+                ? 'Create your account'
+                : 'Sign in to your account'}
           </p>
         </div>
 
@@ -89,25 +109,27 @@ export function Login() {
             </div>
 
             {/* Password */}
-            <div>
-              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-secondary)]" />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="pl-10"
-                  required
-                />
+            {!isForgotPassword && (
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                  Password
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-secondary)]" />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="pl-10"
+                    required
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Confirm Password (signup only) */}
-            {isSignup && (
+            {isSignup && !isForgotPassword && (
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                   Confirm Password
@@ -126,10 +148,34 @@ export function Login() {
               </div>
             )}
 
+            {/* Forgot password link (login mode only) */}
+            {!isSignup && !isForgotPassword && (
+              <div className="text-right">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsForgotPassword(true);
+                    setError('');
+                    setSuccessMessage('');
+                  }}
+                  className="text-sm text-[var(--color-primary)] hover:underline"
+                >
+                  Forgot password?
+                </button>
+              </div>
+            )}
+
             {/* Error message */}
             {error && (
               <div className="bg-red-100 border border-red-300 text-red-700 rounded-lg p-3 text-sm">
                 {error}
+              </div>
+            )}
+
+            {/* Success message */}
+            {successMessage && (
+              <div className="bg-green-100 border border-green-300 text-green-700 rounded-lg p-3 text-sm">
+                {successMessage}
               </div>
             )}
 
@@ -143,7 +189,11 @@ export function Login() {
                 <div className="spinner w-5 h-5 border-white/30 border-t-white"></div>
               ) : (
                 <>
-                  {isSignup ? 'Create Account' : 'Sign In'}
+                  {isForgotPassword
+                    ? 'Send Reset Link'
+                    : isSignup
+                      ? 'Create Account'
+                      : 'Sign In'}
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
@@ -153,16 +203,32 @@ export function Login() {
           {/* Toggle signup/login */}
           <div className="text-center mt-6">
             <p className="text-[var(--text-secondary)]">
-              {isSignup ? 'Already have an account?' : "Don't have an account?"}{' '}
-              <button
-                onClick={() => {
-                  setIsSignup(!isSignup);
-                  setError('');
-                }}
-                className="text-[var(--color-primary)] font-medium hover:underline"
-              >
-                {isSignup ? 'Sign in' : 'Sign up'}
-              </button>
+              {isForgotPassword ? (
+                <button
+                  onClick={() => {
+                    setIsForgotPassword(false);
+                    setError('');
+                    setSuccessMessage('');
+                  }}
+                  className="text-[var(--color-primary)] font-medium hover:underline"
+                >
+                  Back to sign in
+                </button>
+              ) : (
+                <>
+                  {isSignup ? 'Already have an account?' : "Don't have an account?"}{' '}
+                  <button
+                    onClick={() => {
+                      setIsSignup(!isSignup);
+                      setError('');
+                      setSuccessMessage('');
+                    }}
+                    className="text-[var(--color-primary)] font-medium hover:underline"
+                  >
+                    {isSignup ? 'Sign in' : 'Sign up'}
+                  </button>
+                </>
+              )}
             </p>
           </div>
         </div>

@@ -9,7 +9,7 @@ export function Settings() {
   const { accounts, entries } = useData();
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('darkMode');
-    return saved ? JSON.parse(saved) : false;
+    return saved ? JSON.parse(saved) : true;
   });
   const [message, setMessage] = useState('');
 
