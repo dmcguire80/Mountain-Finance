@@ -7,13 +7,13 @@ import { DataProvider } from './context/DataContext';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
-    <StrictMode>
-        <BrowserRouter>
-            <AuthProvider>
-                <DataProvider>
-                    <App />
-                </DataProvider>
-            </AuthProvider>
-        </BrowserRouter>
-    </StrictMode>
+  <StrictMode>
+    <BrowserRouter>
+      <AuthProvider>
+        <DataProvider>
+          <App />
+        </DataProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  </StrictMode>
 );
