@@ -56,8 +56,11 @@ ui-debug.log
 # Agent configurations (KEEP PRIVATE - contains custom agents and skills)
 .agent/
 
-# GitHub workflows (KEEP PRIVATE - contains deployment secrets and logic)
-.github/workflows/
-
 # Gemini/Antigravity artifacts (KEEP PRIVATE)
 .gemini/
+
+# Build artifacts
+tsconfig.tsbuildinfo
+
+# Claude Code local settings
+.claude/settings.local.json
