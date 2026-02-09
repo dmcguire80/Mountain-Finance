@@ -31,6 +31,10 @@ firebase deploy --only firestore # Deploy Firestore rules/indexes only
 
 **Config files:** `firebase.json` (hosting + firestore), `.firebaserc` (project alias), `firestore.rules`, `firestore.indexes.json`
 
+Pushing to `main` triggers GitHub Actions CI which automatically builds and deploys to Firebase. Manual `firebase deploy` is only needed for out-of-band changes.
+
+**Required GitHub Secrets:** `FIREBASE_SERVICE_ACCOUNT`, `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_STORAGE_BUCKET`, `VITE_FIREBASE_MESSAGING_SENDER_ID`, `VITE_FIREBASE_APP_ID`
+
 ## Environment Setup
 
 Copy `.env.example` to `.env` and fill in Firebase credentials. All env vars use the `VITE_` prefix and are accessed via `import.meta.env.VITE_*`. See `FIREBASE_SETUP.md` for full Firebase project configuration.
@@ -39,7 +43,7 @@ Copy `.env.example` to `.env` and fill in Firebase credentials. All env vars use
 
 **Stack:** React 19 + TypeScript 5.9 + Vite 7 + Tailwind CSS 4 + Firebase (Auth + Firestore) + Recharts
 
-**State management:** Two React Contexts — `AuthContext` (Firebase auth state, login/signup/logout) and `DataContext` (accounts & entries CRUD with real-time Firestore `onSnapshot` listeners). No external state library. Access via `useAuth()` and `useData()` hooks.
+**State management:** Two React Contexts — `AuthContext` (Firebase auth state, login/signup/logout/password reset) and `DataContext` (accounts & entries CRUD with real-time Firestore `onSnapshot` listeners). No external state library. Access via `useAuth()` and `useData()` hooks.
 
 **Routing:** React Router v7 in `App.tsx`. All routes except `/login` are wrapped in `ProtectedRoute` which checks auth state. Pages render inside `Layout` (nav sidebar + header + dark mode toggle).
 
@@ -62,9 +66,10 @@ Copy `.env.example` to `.env` and fill in Firebase credentials. All env vars use
 
 - Firestore batch writes (`writeBatch()`) for multi-document operations (DataEntry, Import)
 - `useMemo`/`useCallback` for expensive calculations (chart data, dashboard summaries)
-- Dark mode via CSS variables on `document.documentElement.classList`, persisted in localStorage
+- Dark mode via CSS variables on `document.documentElement.classList`, persisted in localStorage, defaults to dark for new users
 - CSV import supports flexible date formats (YYYY-MM-DD, MM/DD/YYYY) and currency strings ($50,000.00), auto-creates missing accounts
 - Chart data fills gaps by carrying forward last known account values
+- Password reset via Firebase `sendPasswordResetEmail`, exposed through `useAuth().resetPassword`
 
 ## Formatting & Style
 
